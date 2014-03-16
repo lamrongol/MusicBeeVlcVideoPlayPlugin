@@ -57,6 +57,31 @@ namespace MusicBeePlugin
             about.MinApiRevision = MinApiRevision;
             about.ReceiveNotifications = (ReceiveNotificationFlags.PlayerEvents | ReceiveNotificationFlags.TagEvents);
             about.ConfigurationPanelHeight = 100;   // height in pixels that musicbee should reserve in a panel for config settings. When set, a handle to an empty panel will be passed to the Configure function
+
+            // save any persistent settings in a sub-folder of this path
+            string dataPath = mbApiInterface.Setting_GetPersistentStoragePath();
+            string datafile = dataPath + settingFileName;
+            try
+            {
+                //＜Read from XML file＞
+                //Make XmlSerializer object
+                System.Xml.Serialization.XmlSerializer serializer2 =
+                    new System.Xml.Serialization.XmlSerializer(typeof(Settings));
+                //Open file
+                System.IO.FileStream fs2 =
+                    new System.IO.FileStream(datafile, System.IO.FileMode.Open);
+                //unserialize from xml file
+                Settings appSettings =
+                    (Settings)serializer2.Deserialize(fs2);
+                vlcPath = appSettings.VlcPath;
+                isFullScreen = appSettings.IsFullScreen;
+                fs2.Close();
+            }
+            catch (Exception ignored)
+            {
+//                MessageBox.Show(ignored.Message);
+            }
+
             return about;
         }
 
@@ -65,29 +90,6 @@ namespace MusicBeePlugin
 
         public bool Configure(IntPtr panelHandle)
         {
-            // save any persistent settings in a sub-folder of this path
-            string dataPath = mbApiInterface.Setting_GetPersistentStoragePath();
-            string datafile = dataPath + settingFileName;
-            try
-            {
-                //＜XMLファイルから読み込む＞
-                //XmlSerializerオブジェクトの作成
-                System.Xml.Serialization.XmlSerializer serializer2 =
-                    new System.Xml.Serialization.XmlSerializer(typeof(Settings));
-                //ファイルを開く
-                System.IO.FileStream fs2 =
-                    new System.IO.FileStream(datafile, System.IO.FileMode.Open);
-                //XMLファイルから読み込み、逆シリアル化する
-                Settings appSettings =
-                    (Settings)serializer2.Deserialize(fs2);
-                vlcPath = appSettings.VlcPath;
-                isFullScreen = appSettings.IsFullScreen;
-                //閉じる
-                fs2.Close();
-            }
-            catch (Exception ignored)
-            {
-            }
 
 
             // panelHandle will only be set if you set about.ConfigurationPanelHeight to a non-zero value
@@ -114,7 +116,8 @@ namespace MusicBeePlugin
             }
             return false;
         }
-        private const String settingFileName =   @"\VlcVideoPlayPlugin.xml";
+        private const string SETTING_SUB_FOLDER = @"\mb_VlcVideoPlay";
+        private const String settingFileName =  SETTING_SUB_FOLDER+ @"\VlcVideoPlayPlugin.xml";
 
 
         private String tempVlcPath;
@@ -137,18 +140,27 @@ namespace MusicBeePlugin
             string dataPath = mbApiInterface.Setting_GetPersistentStoragePath();
             string datafile = dataPath+settingFileName;
 
+            try{
+                System.Xml.Serialization.XmlSerializer serializer1 =
+                    new System.Xml.Serialization.XmlSerializer(typeof(Settings));
 
-            System.Xml.Serialization.XmlSerializer serializer1 =
-                new System.Xml.Serialization.XmlSerializer(typeof(Settings));
-            //ファイルを開く
-            System.IO.FileStream fs1 =
-                new System.IO.FileStream(datafile, System.IO.FileMode.Create);
-            //シリアル化し、XMLファイルに保存する
-            serializer1.Serialize(fs1, new Settings(tempVlcPath, tempFullScreen));
-            vlcPath = tempVlcPath;
-            isFullScreen = tempFullScreen;
-            //閉じる
-            fs1.Close();
+                string subFolder =dataPath+ SETTING_SUB_FOLDER;
+                if(!System.IO.File.Exists(subFolder)){
+                    System.IO.Directory.CreateDirectory(subFolder);
+                 }
+                //Open file
+                System.IO.FileStream fs1 =
+                    new System.IO.FileStream(datafile, System.IO.FileMode.Create);
+                //Selialkize and save to xml file
+                serializer1.Serialize(fs1, new Settings(tempVlcPath, tempFullScreen));
+                vlcPath = tempVlcPath;
+                isFullScreen = tempFullScreen;
+                fs1.Close();
+            }
+            catch (Exception ignored)
+            {
+ //               MessageBox.Show(ignored.Message);
+            }
 
         }
 
@@ -220,7 +232,7 @@ namespace MusicBeePlugin
                         queueVideoFileToNext();
                         return;
                     }
-
+//                    MessageBox.Show(vlcPath);
                     
                     if (trackList == null) loadNowPlayingList();
 
@@ -243,8 +255,9 @@ namespace MusicBeePlugin
                     else alreadyPlayedMusicCount++;
 
              //       MessageBox.Show(mbApiInterface.NowPlayingList_GetNextIndex(1)+" "+musicCount);
-                    //Videoは通常プレイリストに入らないので、適時入れていく
-                    if (mbApiInterface.NowPlayingList_GetNextIndex(1) == -1 && videoCount>0 && musicCount>0)
+                    //Add video to playlist in appropriate rate
+                    //because videos are not included to playlist under normal conditions,
+                    if (!String.IsNullOrEmpty(vlcPath) && mbApiInterface.NowPlayingList_GetNextIndex(1) == -1 && videoCount > 0 && musicCount > 0)
                     {
                        // MessageBox.Show(alreadyPlayedVideoCount / (alreadyPlayedMusicCount + 0.0) + " " + videoCount / (musicCount + 0.0));
                         if (alreadyPlayedMusicCount >= musicCount / (videoCount + 0.0) * (alreadyPlayedVideoCount+1))
