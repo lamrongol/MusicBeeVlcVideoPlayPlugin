@@ -251,6 +251,10 @@ namespace MusicBeePlugin
                     }
 
                     break;
+                case NotificationType.PlayStateChanged:
+                    if (mbApiInterface.Player_GetPlayState() == PlayState.Stopped) stopCurrentVlc();
+                   // MessageBox.Show(mbApiInterface.Player_GetPlayState() + "");
+                    break;
             }
         }
 
@@ -282,6 +286,7 @@ namespace MusicBeePlugin
 //            int currentDuration = mbApiInterface.NowPlaying_GetDuration();
 //            MessageBox.Show(currentDuration+"");
 
+            /*
             string durationStr = mbApiInterface.Library_GetFileProperty(fileUrl, FilePropertyType.Duration);
             string[] durationArray = durationStr.Split(':');
             int durationInt = 0;
@@ -298,6 +303,7 @@ namespace MusicBeePlugin
             {
                 duration = TimeSpan.Zero;
             }
+            */
 
             string vlcCommand = "--rate=1.0 --play-and-exit ";
             if (isFullScreen) vlcCommand += " --fullscreen ";
@@ -327,12 +333,13 @@ namespace MusicBeePlugin
                 return;
             }
             */
+            /*
             DateTime end = DateTime.Now;
             TimeSpan ts = end - start;
             //MessageBox.Show(duration.TotalSeconds + " " + ts.TotalSeconds);
             //再生時間より遙かに早く終了した倍は強制的に停止されたと考え、再生の停止を行う
             if (duration > TimeSpan.Zero && (duration - ts) > TimeSpan.FromSeconds(10)) return;
-            //MessageBox.Show(mbApiInterface.Player_GetPlayState() + "");
+            */
 
             mbApiInterface.Player_PlayNextTrack();
         }
