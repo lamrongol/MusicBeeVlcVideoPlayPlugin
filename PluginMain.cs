@@ -206,6 +206,7 @@ namespace MusicBeePlugin
         private TimeSpan duration;
         private DateTime start;
         private bool playVideoNext = false;
+        private PlayState prePlayState;
         // receive event notifications from MusicBee
         // you need to set about.ReceiveNotificationFlags = PlayerEvents to receive all notifications, and not just the startup event
         public void ReceiveNotification(string sourceFileUrl, NotificationType type)
@@ -252,8 +253,11 @@ namespace MusicBeePlugin
 
                     break;
                 case NotificationType.PlayStateChanged:
-                    if (mbApiInterface.Player_GetPlayState() == PlayState.Stopped) stopCurrentVlc();
-                   // MessageBox.Show(mbApiInterface.Player_GetPlayState() + "");
+                    //MessageBox.Show("PlayStateChanged:" + mbApiInterface.Player_GetPlayState());
+                    //Only when stop event occurs after video play started(and stop event occured)
+                    if (prePlayState == PlayState.Stopped && mbApiInterface.Player_GetPlayState() == PlayState.Stopped) stopCurrentVlc();
+                    prePlayState = mbApiInterface.Player_GetPlayState();
+                    // MessageBox.Show(mbApiInterface.Player_GetPlayState() + "");
                     break;
             }
         }
@@ -277,6 +281,7 @@ namespace MusicBeePlugin
                 mbApiInterface.Player_PlayNextTrack();
                 return false;
             }
+//            MessageBox.Show("playVideo:" + urls[0]);
             stopCurrentVlc();
 
             alreadyPlayedVideoCount++;
