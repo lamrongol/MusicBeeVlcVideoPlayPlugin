@@ -8,8 +8,7 @@ This is a plugin for MusicBee to play music and music videos continuously.
 
 Requires
 -----
-1. You need MusicBee 2.4 or later.
-   v2.4 Patch: http://musicbee.niblseed.com/V2_4/MusicBee_Exe_Patched.zip
+1. You need MusicBee 2.4 or later. http://getmusicbee.com/download.html
 2. Install VLC media player if you haven't
    VLC: http://www.videolan.org/vlc/
 3. Download dll file to MusicBee plugin folder (C:\Program Files (x86)\MusicBee\Plugins, frequently)
