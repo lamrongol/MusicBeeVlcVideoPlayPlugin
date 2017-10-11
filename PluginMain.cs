@@ -278,7 +278,7 @@ namespace MusicBeePlugin
             if (String.IsNullOrEmpty(vlcPath))
             {
                 MessageBox.Show("Video Continuous Play plugin: VLC path is not set");
-                mbApiInterface.Player_PlayNextTrack();
+                //mbApiInterface.Player_PlayNextTrack();
                 return false;
             }
 //            MessageBox.Show("playVideo:" + urls[0]);
