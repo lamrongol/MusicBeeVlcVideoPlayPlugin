@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows Desktop
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MB_VlcVideoPlugin", "MB_VlcVideoPlugin.csproj", "{F5D46BA1-6F21-40EF-9695-46105CCACD08}"
 EndProject
-Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "MusicBee", "..\..\..\..\..\..\Program Files (x86)\MusicBee\MusicBee.exe", "{809072E2-E025-4840-AF45-E14E21774D33}"
+Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "MusicBee", "..\..\..\..\Program Files (x86)\MusicBee\MusicBee.exe", "{809072E2-E025-4840-AF45-E14E21774D33}"
 	ProjectSection(DebuggerProjectSystem) = preProject
 		PortSupplier = 00000000-0000-0000-0000-000000000000
 		Executable = C:\Program Files (x86)\MusicBee\MusicBee.exe
@@ -40,12 +40,12 @@ Global
 		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Release|Mixed Platforms.Build.0 = Release|x86
 		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Release|x86.ActiveCfg = Release|x86
 		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Release|x86.Build.0 = Release|x86
-		{809072E2-E025-4840-AF45-E14E21774D33}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{809072E2-E025-4840-AF45-E14E21774D33}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{809072E2-E025-4840-AF45-E14E21774D33}.Debug|x86.ActiveCfg = Debug|x86
-		{809072E2-E025-4840-AF45-E14E21774D33}.Release|Any CPU.ActiveCfg = Debug|x86
-		{809072E2-E025-4840-AF45-E14E21774D33}.Release|Mixed Platforms.ActiveCfg = Debug|x86
-		{809072E2-E025-4840-AF45-E14E21774D33}.Release|x86.ActiveCfg = Debug|x86
+		{809072E2-E025-4840-AF45-E14E21774D33}.Debug|Any CPU.ActiveCfg = Release|x86
+		{809072E2-E025-4840-AF45-E14E21774D33}.Debug|Mixed Platforms.ActiveCfg = Release|x86
+		{809072E2-E025-4840-AF45-E14E21774D33}.Debug|x86.ActiveCfg = Release|x86
+		{809072E2-E025-4840-AF45-E14E21774D33}.Release|Any CPU.ActiveCfg = Release|x86
+		{809072E2-E025-4840-AF45-E14E21774D33}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{809072E2-E025-4840-AF45-E14E21774D33}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
