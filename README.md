@@ -1,4 +1,6 @@
-﻿Plugin documentation
+**Caution: This plugin doesn't work from version 3.1**
+
+Plugin documentation
 ====================
 
 About
