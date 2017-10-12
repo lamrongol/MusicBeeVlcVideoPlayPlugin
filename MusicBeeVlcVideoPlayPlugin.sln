@@ -26,6 +26,7 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x86 = Release|x86
+		Description = A plugin for MusicBee to play music and music videos continuously. 
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
