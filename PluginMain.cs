@@ -415,26 +415,62 @@ namespace MusicBeePlugin
 
         // return an array of lyric or artwork provider names this plugin supports
         // the providers will be iterated through one by one and passed to the RetrieveLyrics/ RetrieveArtwork function in order set by the user in the MusicBee Tags(2) preferences screen until a match is found
-        public string[] GetProviders()
-        {
-            return null;
-        }
+        //public string[] GetProviders()
+        //{
+        //    return null;
+        //}
 
         // return lyrics for the requested artist/title from the requested provider
         // only required if PluginType = LyricsRetrieval
         // return null if no lyrics are found
-        public string RetrieveLyrics(string sourceFileUrl, string artist, string trackTitle, string album, bool synchronisedPreferred, string provider)
-        {
-            return null;
-        }
+        //public string RetrieveLyrics(string sourceFileUrl, string artist, string trackTitle, string album, bool synchronisedPreferred, string provider)
+        //{
+        //    return null;
+        //}
 
         // return Base64 string representation of the artwork binary data from the requested provider
         // only required if PluginType = ArtworkRetrieval
         // return null if no artwork is found
-        public string RetrieveArtwork(string sourceFileUrl, string albumArtist, string album, string provider)
-        {
-            //Return Convert.ToBase64String(artworkBinaryData)
-            return null;
-        }
+        //public string RetrieveArtwork(string sourceFileUrl, string albumArtist, string album, string provider)
+        //{
+        //    //Return Convert.ToBase64String(artworkBinaryData)
+        //    return null;
+        //}
+
+        //  presence of this function indicates to MusicBee that this plugin has a dockable panel. MusicBee will create the control and pass it as the panel parameter
+        //  you can add your own controls to the panel if needed
+        //  you can control the scrollable area of the panel using the mbApiInterface.MB_SetPanelScrollableArea function
+        //  to set a MusicBee header for the panel, set about.TargetApplication in the Initialise function above to the panel header text
+        //public int OnDockablePanelCreated(Control panel)
+        //{
+        //  //    return the height of the panel and perform any initialisation here
+        //  //    MusicBee will call panel.Dispose() when the user removes this panel from the layout configuration
+        //  //    < 0 indicates to MusicBee this control is resizable and should be sized to fill the panel it is docked to in MusicBee
+        //  //    = 0 indicates to MusicBee this control resizeable
+        //  //    > 0 indicates to MusicBee the fixed height for the control.Note it is recommended you scale the height for high DPI screens(create a graphics object and get the DpiY value)
+        //    float dpiScaling = 0;
+        //    using (Graphics g = panel.CreateGraphics())
+        //    {
+        //        dpiScaling = g.DpiY / 96f;
+        //    }
+        //    panel.Paint += panel_Paint;
+        //    return Convert.ToInt32(100 * dpiScaling);
+        //}
+
+        // presence of this function indicates to MusicBee that the dockable panel created above will show menu items when the panel header is clicked
+        // return the list of ToolStripMenuItems that will be displayed
+        //public List<ToolStripItem> GetHeaderMenuItems()
+        //{
+        //    List<ToolStripItem> list = new List<ToolStripItem>();
+        //    list.Add(new ToolStripMenuItem("A menu item"));
+        //    return list;
+        //}
+
+        //private void panel_Paint(object sender, PaintEventArgs e)
+        //{
+        //    e.Graphics.Clear(Color.Red);
+        //    TextRenderer.DrawText(e.Graphics, "hello", SystemFonts.CaptionFont, new Point(10, 10), Color.Blue);
+        //}
+
     }
 }

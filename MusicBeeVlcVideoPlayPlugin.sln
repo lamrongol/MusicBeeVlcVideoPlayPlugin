@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32602.291
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MB_VlcVideoPlugin", "MB_VlcVideoPlugin.csproj", "{F5D46BA1-6F21-40EF-9695-46105CCACD08}"
 EndProject
-Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "MusicBee", "..\..\..\..\Program Files (x86)\MusicBee\MusicBee.exe", "{809072E2-E025-4840-AF45-E14E21774D33}"
+Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "MusicBee", "C:\Program Files (x86)\MusicBee\MusicBee.exe", "{218D0DD4-3349-41DF-BAEC-9D522E853746}"
 	ProjectSection(DebuggerProjectSystem) = preProject
 		PortSupplier = 00000000-0000-0000-0000-000000000000
 		Executable = C:\Program Files (x86)\MusicBee\MusicBee.exe
@@ -16,39 +16,35 @@ Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "MusicBee", "..\..\..\..\Pro
 		UseLegacyDebugEngines = No
 		LaunchSQLEngine = No
 		AttachLaunchAction = No
+		IORedirection = Auto
 	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
-		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x86 = Release|x86
 		Description = A plugin for MusicBee to play music and music videos continuously. 
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Debug|x86.ActiveCfg = Debug|x86
 		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Debug|x86.Build.0 = Debug|x86
 		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Release|Mixed Platforms.Build.0 = Release|x86
 		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Release|x86.ActiveCfg = Release|x86
 		{F5D46BA1-6F21-40EF-9695-46105CCACD08}.Release|x86.Build.0 = Release|x86
-		{809072E2-E025-4840-AF45-E14E21774D33}.Debug|Any CPU.ActiveCfg = Release|x86
-		{809072E2-E025-4840-AF45-E14E21774D33}.Debug|Mixed Platforms.ActiveCfg = Release|x86
-		{809072E2-E025-4840-AF45-E14E21774D33}.Debug|x86.ActiveCfg = Release|x86
-		{809072E2-E025-4840-AF45-E14E21774D33}.Release|Any CPU.ActiveCfg = Release|x86
-		{809072E2-E025-4840-AF45-E14E21774D33}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{809072E2-E025-4840-AF45-E14E21774D33}.Release|x86.ActiveCfg = Release|x86
+		{218D0DD4-3349-41DF-BAEC-9D522E853746}.Debug|Any CPU.ActiveCfg = Release|x86
+		{218D0DD4-3349-41DF-BAEC-9D522E853746}.Debug|x86.ActiveCfg = Release|x86
+		{218D0DD4-3349-41DF-BAEC-9D522E853746}.Release|Any CPU.ActiveCfg = Release|x86
+		{218D0DD4-3349-41DF-BAEC-9D522E853746}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CF6930D9-00BA-42EE-907A-6203B6505115}
 	EndGlobalSection
 EndGlobal
