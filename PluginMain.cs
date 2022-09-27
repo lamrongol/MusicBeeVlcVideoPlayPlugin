@@ -86,8 +86,13 @@ namespace MusicBeePlugin
 
         private string getDefaultVlcPath()
         {
-            String programFiles = System.Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-            return programFiles + @"\VideoLAN\VLC";
+            String programFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%");
+            String path = programFiles + @"\VideoLAN\VLC";
+            if (!Directory.Exists(path))
+            {
+                path = Environment.ExpandEnvironmentVariables("%ProgramFiles(x86)%") + @"\VideoLAN\VLC";
+            }
+            return path;
         }
 
         private string vlcPath;
