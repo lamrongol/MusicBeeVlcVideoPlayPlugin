@@ -10,29 +10,25 @@ namespace MusicBeePlugin
 {
     public class Settings
     {
-    private string vlcPath;
-    private bool isFullScreen;
+        private string vlcPath;
+        private bool isFullScreen;
 
-    public string VlcPath
-    {
-        get {return vlcPath;}
-        set {vlcPath = value;}
-    }
-    public bool IsFullScreen
-    {
-        get {return isFullScreen;}
-        set {isFullScreen = value;}
-    }
+        public string VlcPath
+        {
+            get { return vlcPath; }
+            set { vlcPath = value; }
+        }
+        public bool IsFullScreen
+        {
+            get { return isFullScreen; }
+            set { isFullScreen = value; }
+        }
 
-    public Settings()
-    {
-    }
-
-    public Settings(String vlcPath, bool isFullScreen)
-    {
-        this.vlcPath = vlcPath;
-        this.isFullScreen = isFullScreen;
-    }
+        public Settings(String vlcPath, bool isFullScreen)
+        {
+            this.vlcPath = vlcPath;
+            this.isFullScreen = isFullScreen;
+        }
     }
 
     public partial class Plugin
@@ -117,7 +113,7 @@ namespace MusicBeePlugin
                 vlcFilePathTextBox.Bounds = new Rectangle(60, 0, 300, vlcFilePathTextBox.Height);
 
                 vlcFileSelectButton = new Button();
-//                vlcFileSelectButton.AutoSize = true;
+                //vlcFileSelectButton.AutoSize = true;
                 vlcFileSelectButton.Text = "..";
                 vlcFileSelectButton.Bounds = new Rectangle(vlcFilePathTextBox.Right + 2, vlcFilePathTextBox.Top, 30, vlcFilePathTextBox.Height);
                 vlcFileSelectButton.Click += new EventHandler(VlcFileSelectButton_Clicked);
@@ -131,45 +127,45 @@ namespace MusicBeePlugin
             return false;
         }
         private const string SETTING_SUB_FOLDER = @"\mb_VlcVideoPlay";
-        private const String settingFileName =  SETTING_SUB_FOLDER+ @"\VlcVideoPlayPlugin.xml";
+        private const String settingFileName = SETTING_SUB_FOLDER + @"\VlcVideoPlayPlugin.xml";
 
 
-         private void VlcFileSelectButton_Clicked(object sender, EventArgs e)
+        private void VlcFileSelectButton_Clicked(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             openFileDialog1.InitialDirectory = getDefaultVlcPath();
             openFileDialog1.FileName = "vlc.exe";
 
-
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                //OKボタンがクリックされたとき
-                //選択されたファイル名を表示する
+                //When the OK button is clicked, showing a selected file name.
                 vlcFilePathTextBox.Text = openFileDialog1.FileName;
             }
         }
-       
+
         // called by MusicBee when the user clicks Apply or Save in the MusicBee Preferences screen.
         // its up to you to figure out whether anything has changed and needs updating
         public void SaveSettings()
         {
-            if(vlcFilePathTextBox!=null) vlcPath = vlcFilePathTextBox.Text;
+            if (vlcFilePathTextBox != null) vlcPath = vlcFilePathTextBox.Text;
             if (fullScreenCheckBox != null) isFullScreen = fullScreenCheckBox.Checked;
 
             // save any persistent settings in a sub-folder of this path
             string dataPath = mbApiInterface.Setting_GetPersistentStoragePath();
-            string datafile = dataPath+settingFileName;
+            string datafile = dataPath + settingFileName;
 
-            try{
+            try
+            {
                 System.Xml.Serialization.XmlSerializer serializer1 =
                     new System.Xml.Serialization.XmlSerializer(typeof(Settings));
 
-                string subFolder =dataPath+ SETTING_SUB_FOLDER;
-                if(!System.IO.File.Exists(subFolder)){
+                string subFolder = dataPath + SETTING_SUB_FOLDER;
+                if (!System.IO.File.Exists(subFolder))
+                {
                     System.IO.Directory.CreateDirectory(subFolder);
-                 }
+                }
 
-                
+
                 //Open file
                 System.IO.FileStream fs1 =
                     new System.IO.FileStream(datafile, System.IO.FileMode.Create);
@@ -179,7 +175,7 @@ namespace MusicBeePlugin
             }
             catch (Exception ignored)
             {
- //               MessageBox.Show(ignored.Message);
+                //MessageBox.Show(ignored.Message);
             }
 
         }
@@ -292,22 +288,28 @@ namespace MusicBeePlugin
 //            MessageBox.Show(currentDuration+"");
 
             /*
-            string durationStr = mbApiInterface.Library_GetFileProperty(fileUrl, FilePropertyType.Duration);
-            string[] durationArray = durationStr.Split(':');
-            int durationInt = 0;
-            try
-            {
-                foreach (String str in durationArray)
-                {
-                    durationInt *= 60;
-                    durationInt += int.Parse(str);
-                }
-                duration = TimeSpan.FromSeconds(durationInt);
-            }
-            catch
-            {
-                duration = TimeSpan.Zero;
-            }
+                        int currentDuration = mbApiInterface.NowPlaying_GetDuration();
+                        MessageBox.Show(currentDuration+"");
+            */
+            //Dont work for some files.
+            /*
+                        string durationStr = mbApiInterface.Library_GetFileProperty(fileUrl, FilePropertyType.Duration);
+                        string[] durationArray = durationStr.Split(':');
+                        int durationInt = 0;
+                        try
+                        {
+                            foreach (String str in durationArray)
+                            {
+                                durationInt *= 60;
+                                durationInt += int.Parse(str);
+                            }
+                            duration = TimeSpan.FromSeconds(durationInt);
+                        }
+                        catch
+                        {
+                            duration = TimeSpan.Zero;
+                        }
+                        MessageBox.Show(duration + "");
             */
 
             string vlcCommand = "--rate=1.0 --play-and-exit ";
