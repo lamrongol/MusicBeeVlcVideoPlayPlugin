@@ -191,17 +191,6 @@ namespace MusicBeePlugin
         }
 
         private System.Diagnostics.Process vlcProcess;
-        private HashSet<int> alreadyPlayedIdx = new HashSet<int>();
-        private int trackCount = 0;
-        private int musicCount = 0;
-        private int videoCount = 0;
-        private int alreadyPlayedMusicCount = 0;
-        private int alreadyPlayedVideoCount = 0;
-        List<String> unplayedVideoList = null;
-        List<String> trackList = null;
-        private TimeSpan duration;
-        private DateTime start;
-        private bool playVideoNext = false;
         private PlayState prePlayState;
         // receive event notifications from MusicBee
         // you need to set about.ReceiveNotificationFlags = PlayerEvents to receive all notifications, and not just the startup event
@@ -210,50 +199,16 @@ namespace MusicBeePlugin
             // perform some action depending on the notification type
             switch (type)
             {
-                /*
-                case NotificationType.NowPlayingListChanged:
-                    loadNowPlayingList();
-                    break;
-                */
-                /*
-                case NotificationType.RatingChanged:
-                    string ratingStr = mbApiInterface.Library_GetFileTag(sourceFileUrl, MetaDataType.Rating);
-
-                    MessageBox.Show(sourceFileUrl + " " + ratingStr);
-
-                    double rating = double.Parse(ratingStr);
-
-                    TagLib.Id3v2.Tag.DefaultVersion = 3;
-                    TagLib.Id3v2.Tag.ForceDefaultVersion = true;
-
-                    TagLib.File file = TagLib.File.Create(sourceFileUrl);
-
-                    TagLib.Tag Tag = file.GetTag(TagTypes.Id3v2);
-                    TagLib.Id3v2.PopularimeterFrame frame = TagLib.Id3v2.PopularimeterFrame.Get((TagLib.Id3v2.Tag)Tag, "WindowsUser", true);
-                    frame.Rating = (byte)(255 * rating/5.0);
-                    file.Save();
-                    MessageBox.Show(sourceFileUrl + " " + ratingStr);
-                    break;
-                */
                 case NotificationType.TrackChanged:
-//                    string artist = mbApiInterface.NowPlaying_GetFileTag(MetaDataType.Artist);
-//                    MessageBox.Show(sourceFileUrl);
-
                     if (!isVideo(sourceFileUrl))
                     {
                         stopCurrentVlc();
-                        alreadyPlayedMusicCount++;
-
-                        return;
                     }
-
                     break;
                 case NotificationType.PlayStateChanged:
-                    //MessageBox.Show("PlayStateChanged:" + mbApiInterface.Player_GetPlayState());
                     //Only when stop event occurs after video play started(and stop event occured)
                     if (prePlayState == PlayState.Stopped && mbApiInterface.Player_GetPlayState() == PlayState.Stopped) stopCurrentVlc();
                     prePlayState = mbApiInterface.Player_GetPlayState();
-                    // MessageBox.Show(mbApiInterface.Player_GetPlayState() + "");
                     break;
             }
         }
@@ -268,7 +223,8 @@ namespace MusicBeePlugin
 
         }
 
-        
+        //private TimeSpan duration;
+        //private DateTime start;
         public bool PlayVideo(string[] urls)
         {
             if (String.IsNullOrEmpty(vlcPath))
@@ -277,16 +233,11 @@ namespace MusicBeePlugin
                 //mbApiInterface.Player_PlayNextTrack();
                 return false;
             }
-//            MessageBox.Show("playVideo:" + urls[0]);
             stopCurrentVlc();
-
-            alreadyPlayedVideoCount++;
-
             String fileUrl = urls[0];
 
-//            int currentDuration = mbApiInterface.NowPlaying_GetDuration();
-//            MessageBox.Show(currentDuration+"");
-
+            //start = DateTime.Now;
+            //Dont work for some files.
             /*
                         int currentDuration = mbApiInterface.NowPlaying_GetDuration();
                         MessageBox.Show(currentDuration+"");
@@ -319,10 +270,8 @@ namespace MusicBeePlugin
             vlcProcess = new System.Diagnostics.Process();
             vlcProcess.StartInfo.FileName = vlcPath;
             vlcProcess.StartInfo.Arguments = vlcCommand;
-            //vlcProcess.SynchronizingObject = this;
             vlcProcess.Exited += new EventHandler(vlcProcess_Exited);
             vlcProcess.EnableRaisingEvents = true;
-            start = DateTime.Now;
             vlcProcess.Start();
             return true;
         }
@@ -334,17 +283,12 @@ namespace MusicBeePlugin
                 mbApiInterface.Player_StopAfterCurrent();
                 return;
             }
-            /*
-            if (mbApiInterface.Player_GetPlayState() != PlayState.Playing)
-            {
-                return;
-            }
-            */
+            //Can't be used unlesss duration can be calculated.
             /*
             DateTime end = DateTime.Now;
             TimeSpan ts = end - start;
             //MessageBox.Show(duration.TotalSeconds + " " + ts.TotalSeconds);
-            //再生時間より遙かに早く終了した倍は強制的に停止されたと考え、再生の停止を行う
+            //Stop playback when VLC is exited much earlier than the video playback time because assuming that it was forcibly stopped.
             if (duration > TimeSpan.Zero && (duration - ts) > TimeSpan.FromSeconds(10)) return;
             */
 
@@ -359,60 +303,6 @@ namespace MusicBeePlugin
             string ext = Path.GetExtension(fileUrl);
             ext = ext.Substring(1).ToLower();
             return VIDEO_EXT_SET.Contains(ext);
-        }
-
-
-
-        private void queueVideoFileToNext()
-        {
-            if (unplayedVideoList.Count == 0) return;
-
-            Random randomizer = new Random();
-            string[] asArray = unplayedVideoList.ToArray();
-            string nextVideoFile = asArray[randomizer.Next(asArray.Length)];
-
-            unplayedVideoList.Remove(nextVideoFile);
-           
-        }
-
-        private void loadNowPlayingList()
-        {
-            mbApiInterface.NowPlayingList_QueryFiles(null);
-            trackList = new List<String>();
-            unplayedVideoList = new List<String>();
-
-            musicCount = 0;
-            videoCount = 0;
-
-            while (true)
-            {
-                string playListTrack = mbApiInterface.NowPlayingList_QueryGetNextFile();
-                if (String.IsNullOrEmpty(playListTrack))
-                {
-                    break;
-                }
-
-                if (isVideo(playListTrack))
-                {
-                    videoCount++;
-                    unplayedVideoList.Add(playListTrack);
-                }
-                else musicCount++;
-
-                trackList.Add(playListTrack);
-            }
-            //       MessageBox.Show(musicCount + " " + videoCount);
-            alreadyPlayedVideoCount = 0;
-            alreadyPlayedMusicCount = 0;
-
-            trackCount = trackList.Count;
-
-            //Only Video
-            if (musicCount == 0)
-            {
-                queueVideoFileToNext();
-                return;
-            }
         }
 
         // return an array of lyric or artwork provider names this plugin supports
