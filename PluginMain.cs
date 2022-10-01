@@ -74,7 +74,7 @@ namespace MusicBeePlugin
                 isFullScreen = appSettings.IsFullScreen;
                 fs2.Close();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //Set Default Setting
                 if (String.IsNullOrEmpty(vlcPath)) vlcPath = getDefaultVlcPath() + @"\vlc.exe";
@@ -178,7 +178,7 @@ namespace MusicBeePlugin
                 serializer1.Serialize(fs1, new Settings(vlcPath, isFullScreen));
                 fs1.Close();
             }
-            catch (Exception ignored)
+            catch (Exception)
             {
                 //MessageBox.Show(ignored.Message);
             }
