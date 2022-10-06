@@ -268,7 +268,7 @@ namespace MusicBeePlugin
                         MessageBox.Show(duration + "");
             */
 
-            string vlcCommand = "--rate=1.0 --play-and-exit ";
+            string vlcCommand = "--rate=1.0 --play-and-exit --video-on-top ";
             if (isFullScreen) vlcCommand += " --fullscreen ";
             vlcCommand += " \"" + fileUrl + "\"";
 
