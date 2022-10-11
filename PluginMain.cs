@@ -56,7 +56,7 @@ namespace MusicBeePlugin
 
             // save any persistent settings in a sub-folder of this path
             string dataPath = mbApiInterface.Setting_GetPersistentStoragePath();
-            string datafile = dataPath + settingFileName;
+            string datafile = dataPath + SETTING_FILE_NAME;
             try
             {
                 //＜Read from XML file＞
@@ -77,14 +77,14 @@ namespace MusicBeePlugin
             catch (Exception)
             {
                 //Set Default Setting
-                if (String.IsNullOrEmpty(vlcPath)) vlcPath = getDefaultVlcPath() + @"\vlc.exe";
+                if (String.IsNullOrEmpty(vlcPath)) vlcPath = GetDefaultVlcPath() + @"\vlc.exe";
             }
             if (!File.Exists(vlcPath)) vlcPath = "";
 
             return about;
         }
 
-        private string getDefaultVlcPath()
+        private string GetDefaultVlcPath()
         {
             String programFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%");
             String path = programFiles + @"\VideoLAN\VLC";
@@ -132,13 +132,13 @@ namespace MusicBeePlugin
             return false;
         }
         private const string SETTING_SUB_FOLDER = @"\mb_VlcVideoPlay";
-        private const String settingFileName = SETTING_SUB_FOLDER + @"\VlcVideoPlayPlugin.xml";
+        private const string SETTING_FILE_NAME = SETTING_SUB_FOLDER + @"\VlcVideoPlayPlugin.xml";
 
 
         private void VlcFileSelectButton_Clicked(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.InitialDirectory = getDefaultVlcPath();
+            openFileDialog1.InitialDirectory = GetDefaultVlcPath();
             openFileDialog1.FileName = "vlc.exe";
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -157,7 +157,7 @@ namespace MusicBeePlugin
 
             // save any persistent settings in a sub-folder of this path
             string dataPath = mbApiInterface.Setting_GetPersistentStoragePath();
-            string datafile = dataPath + settingFileName;
+            string datafile = dataPath + SETTING_FILE_NAME;
 
             try
             {
@@ -205,24 +205,24 @@ namespace MusicBeePlugin
             switch (type)
             {
                 case NotificationType.TrackChanged:
-                    if (!isVideo(sourceFileUrl))
+                    if (!IsVideo(sourceFileUrl))
                     {
-                        stopCurrentVlc();
+                        StopCurrentVlc();
                     }
                     break;
                 case NotificationType.PlayStateChanged:
                     //Only when stop event occurs after video play started(and stop event occured)
-                    if (prePlayState == PlayState.Stopped && mbApiInterface.Player_GetPlayState() == PlayState.Stopped) stopCurrentVlc();
+                    if (prePlayState == PlayState.Stopped && mbApiInterface.Player_GetPlayState() == PlayState.Stopped) StopCurrentVlc();
                     prePlayState = mbApiInterface.Player_GetPlayState();
                     break;
             }
         }
 
-        private void stopCurrentVlc()
+        private void StopCurrentVlc()
         {
             if (vlcProcess != null && !vlcProcess.HasExited)
             {
-                vlcProcess.Exited -= new EventHandler(vlcProcess_Exited);
+                vlcProcess.Exited -= new EventHandler(VlcProcess_Exited);
                 vlcProcess.CloseMainWindow();
             }
 
@@ -238,7 +238,7 @@ namespace MusicBeePlugin
                 //mbApiInterface.Player_PlayNextTrack();
                 return false;
             }
-            stopCurrentVlc();
+            StopCurrentVlc();
             String fileUrl = urls[0];
 
             //start = DateTime.Now;
@@ -275,13 +275,13 @@ namespace MusicBeePlugin
             vlcProcess = new System.Diagnostics.Process();
             vlcProcess.StartInfo.FileName = vlcPath;
             vlcProcess.StartInfo.Arguments = vlcCommand;
-            vlcProcess.Exited += new EventHandler(vlcProcess_Exited);
+            vlcProcess.Exited += new EventHandler(VlcProcess_Exited);
             vlcProcess.EnableRaisingEvents = true;
             vlcProcess.Start();
             return true;
         }
 
-        private void vlcProcess_Exited(object sender, EventArgs e)
+        private void VlcProcess_Exited(object sender, EventArgs e)
         {
             if (mbApiInterface.Player_GetStopAfterCurrentEnabled())
             {
@@ -303,7 +303,7 @@ namespace MusicBeePlugin
         //Video File Formats <http://www.fileinfo.com/filetypes/video>
         private HashSet<String> VIDEO_EXT_SET = new HashSet<string>() { "aep", "rms", "dzm", "wpl", "veg", "sfd", "psh", "wp3", "mpeg", "piv", "scm", "dir", "trp", "swf", "bik", "otrkey", "webm", "3gp2", "bdmv", "dzt", "fcp", "gfp", "m21", "mvp", "nvc", "rdb", "rec", "rmp", "rv", "screenflow", "swt", "usm", "vc1", "vcpf", "viewlet", "wvx", "vob", "mswmm", "wlmp", "avi", "srt", "mkv", "3gp", "ts", "wmv", "m2p", "vro", "msdvd", "fbr", "dzp", "mp4infovid", "asf", "m4v", "aepx", "mani", "mnv", "mproj", "sbk", "bu", "kmv", "bin", "swi", "meta", "mts", "amx", "prproj", "r3d", "ifo", "mpg", "hdmov", "pds", "amc", "tp", "wmd", "wmx", "mmv", "mob", "vp3", "mp4", "3g2", "lrv", "scc", "bnp", "dv4", "mov", "stx", "xvid", "yuv", "890", "avchd", "dmx", "roq", "wve", "3mm", "dnc", "f4f", "inp", "ivf", "k3g", "lsx", "lvix", "moff", "qt", "spl", "vcr", "wm", "f4v", "dvr", "dat", "cpi", "ogv", "trec", "vgz", "dxr", "flv", "dcr", "m2t", "pmf", "camproj", "dvdmedia", "fcproject", "ism", "ismv", "tix", "clpi", "f4p", "fli", "hdv", "rsx", "dav", "m15", "rmvb", "vp6", "str", "video", "264", "bdm", "divx", "3gpp", "mvp", "smv", "gvi", "mpeg4", "mod", "aetx", "playlist", "dcr", "rm", "sfera", "h264", "ajp", "vpj", "ale", "avp", "bsf", "dash", "dmsm", "dream", "imovieproj", "smil", "3p2", "aaf", "arcut", "avb", "avv", "bdt3", "bmc", "ced", "cine", "cip", "cmmp", "cmmtpl", "cmrec", "cst", "d2v", "d3v", "dce", "dck", "dmsd", "dmss", "dpa", "eyetv", "fbz", "ffm", "flc", "flh", "fpdx", "ftc", "gcs", "gifv", "gts", "hkm", "imoviemobile", "imovieproject", "ircp", "ismc", "ivr", "izz", "izzy", "jss", "jts", "jtv", "kdenlive", "m1pg", "m21", "m2ts", "m2v", "mgv", "mj2", "mk3d", "mp21", "mpgindex", "mpls", "mpv", "mse", "mtv", "mvd", "mve", "mvy", "mxv", "ncor", "nsv", "nuv", "ogm", "ogx", "pac", "photoshow", "plproj", "ppj", "pro", "prtl", "pxv", "qtl", "qtz", "rcd", "rum", "rvid", "rvl", "sdv", "sedprj", "seq", "sfvidcap", "siv", "smi", "smk", "stl", "svi", "tda3mt", "thp", "tivo", "tod", "tp0", "tpd", "tpr", "tsp", "ttxt", "tvlayer", "tvshow", "usf", "vbc", "vcv", "vdo", "vdr", "vfz", "vlab", "vsp", "wcp", "wmmp", "xej", "xesc", "xfl", "xlmv", "y4m", "zm1", "zm2", "zm3", "lrec", "mp4v", "mpe", "mys", "aqt", "gom", "orv", "ssm", "zeg", "camrec", "mxf", "zmv", "aec", "box", "dpg", "tvs", "vep", "db2", "arf", "moi", "rcproject", "vf", "60d", "vid", "dvr-ms", "bmk", "edl", "snagproj", "sqz", "dv", "dv-avi", "eye", "mp21", "pgi", "rmd", "avs", "int", "mp2v", "scn", "tdt", "ismclip", "m4e", "mpl", "avs", "evo", "smi", "vivo", "asx", "movie", "irf", "axm", "cmproj", "dmsd3d", "dvx", "ezt", "mjp", "mqv", "prel", "vp7", "xel", "aet", "anx", "avc", "avd", "awlive", "axv", "bdt2", "bs4", "bvr", "byu", "camv", "clk", "cx3", "ddat", "dlx", "dmb", "dmsm3d", "fbr", "ffd", "flx", "gvp", "imovielibrary", "iva", "jmv", "ktn", "m1v", "m2a", "m4u", "mjpg", "mpsub", "mvc", "mvex", "osp", "par", "pns", "pro4dvd", "pro5dvd", "proqc", "pssd", "pva", "qtch", "qtindex", "qtm", "rp", "rts", "sbt", "sml", "theater", "tid", "tvrecording", "vem", "vfw", "vix", "vs4", "vse", "w32", "wot", "yog", "787", "ssf", "mpg2", "wtv", "amv", "mpl", "xmv", "dif", "modd", "vft", "vmlt", "grasp", "3gpp2", "moov", "pvr", "vmlf", "am", "anim", "bix", "cel", "cvc", "dsy", "gl", "ivs", "lsf", "m75", "mpeg1", "mpf", "mpv2", "msh", "mvb", "nut", "pjs", "pmv", "psb", "rmd", "rmv", "rts", "scm", "sec", "tdx", "vdx", "viv" };
 
-        private bool isVideo(String fileUrl)
+        private bool IsVideo(String fileUrl)
         {
             string ext = Path.GetExtension(fileUrl);
             ext = ext.Substring(1).ToLower();
