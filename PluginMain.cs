@@ -4,7 +4,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace MusicBeePlugin
 {
@@ -272,13 +273,43 @@ namespace MusicBeePlugin
             if (isFullScreen) vlcCommand += " --fullscreen ";
             vlcCommand += " \"" + fileUrl + "\"";
 
+            IntPtr currentWindow = GetForegroundWindow();
             vlcProcess = new System.Diagnostics.Process();
             vlcProcess.StartInfo.FileName = vlcPath;
             vlcProcess.StartInfo.Arguments = vlcCommand;
             vlcProcess.Exited += new EventHandler(VlcProcess_Exited);
             vlcProcess.EnableRaisingEvents = true;
             vlcProcess.Start();
+            vlcProcess.WaitForInputIdle();
+            string strTitleContains = Path.GetFileName(fileUrl);
+            ReactivateCurrentWindow(vlcProcess, strTitleContains, currentWindow);
+
             return true;
+        }
+
+        [DllImport("user32.dll")]
+        static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        static async void ReactivateCurrentWindow(Process newProcess, string strTitleContains, IntPtr currentWindow)
+        {
+            for(int i = 0; i<100; i++)
+            {
+                newProcess.Refresh();
+                //Console.WriteLine("MainWindowHandle:" + newProcess.MainWindowHandle);
+                if (!newProcess.MainWindowHandle.Equals(IntPtr.Zero))
+                {
+                    if (newProcess.MainWindowTitle.Contains(strTitleContains))
+                    {
+                        SetForegroundWindow(currentWindow);
+                        //Console.WriteLine("Title:" + newProcess.MainWindowTitle);
+                        return;
+                    }
+                }
+                await Task.Delay(10);
+            }
         }
 
         private void VlcProcess_Exited(object sender, EventArgs e)
