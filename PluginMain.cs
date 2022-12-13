@@ -13,6 +13,7 @@ namespace MusicBeePlugin
     {
         private string vlcPath;
         private bool isFullScreen;
+        private bool isAlwaysOnTop;
 
         public string VlcPath
         {
@@ -25,10 +26,36 @@ namespace MusicBeePlugin
             set { isFullScreen = value; }
         }
 
-        public Settings(String vlcPath, bool isFullScreen)
+        public bool IsAlwaysOnTop {
+            get { return isAlwaysOnTop; }
+            set { isAlwaysOnTop = value; }
+        }
+
+        public Settings()
+        {
+            this.vlcPath = Tools.GetDefaultVlcPath() + @"\vlc.exe";
+            this.isFullScreen = false;
+            this.isAlwaysOnTop = false;
+        }
+        public Settings(String vlcPath, bool isFullScreen, bool isAlwaysOnTop)
         {
             this.vlcPath = vlcPath;
             this.isFullScreen = isFullScreen;
+            this.isAlwaysOnTop = isAlwaysOnTop;
+        }
+    }
+
+    public static partial class Tools
+    {
+        public static string GetDefaultVlcPath()
+        {
+            String programFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%");
+            String path = programFiles + @"\VideoLAN\VLC";
+            if (!Directory.Exists(path))
+            {
+                path = Environment.ExpandEnvironmentVariables("%ProgramFiles(x86)%") + @"\VideoLAN\VLC";
+            }
+            return path;
         }
     }
 
@@ -73,34 +100,26 @@ namespace MusicBeePlugin
                 vlcPath = appSettings.VlcPath;
 
                 isFullScreen = appSettings.IsFullScreen;
+                isAlwaysOnTop = appSettings.IsAlwaysOnTop; 
                 fs2.Close();
             }
             catch (Exception)
             {
                 //Set Default Setting
-                if (String.IsNullOrEmpty(vlcPath)) vlcPath = GetDefaultVlcPath() + @"\vlc.exe";
+                if (String.IsNullOrEmpty(vlcPath)) vlcPath = Tools.GetDefaultVlcPath() + @"\vlc.exe";
             }
             if (!File.Exists(vlcPath)) vlcPath = "";
 
             return about;
         }
 
-        private string GetDefaultVlcPath()
-        {
-            String programFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%");
-            String path = programFiles + @"\VideoLAN\VLC";
-            if (!Directory.Exists(path))
-            {
-                path = Environment.ExpandEnvironmentVariables("%ProgramFiles(x86)%") + @"\VideoLAN\VLC";
-            }
-            return path;
-        }
-
         private string vlcPath;
         private bool isFullScreen;
+        private bool isAlwaysOnTop;
         private Button vlcFileSelectButton;
         private System.Windows.Forms.TextBox vlcFilePathTextBox;
         private CheckBox fullScreenCheckBox;
+        private CheckBox alwaysOnTopCheckBox;
 
         public bool Configure(IntPtr panelHandle)
         {
@@ -126,20 +145,25 @@ namespace MusicBeePlugin
 
                 fullScreenCheckBox = new CheckBox();
                 fullScreenCheckBox.Checked = isFullScreen;
-                fullScreenCheckBox.Text = "FullScreen";
+                fullScreenCheckBox.Text = "Full Screen";
                 fullScreenCheckBox.Location = new Point(0, vlcFilePathTextBox.Height + 5);
-                configPanel.Controls.AddRange(new Control[] { prompt, vlcFilePathTextBox, fullScreenCheckBox, vlcFileSelectButton });
+
+                alwaysOnTopCheckBox = new CheckBox();
+                alwaysOnTopCheckBox.Checked = isAlwaysOnTop;
+                alwaysOnTopCheckBox.Text = "Always On Top";
+                alwaysOnTopCheckBox.Location = new Point(0, fullScreenCheckBox.Location.Y + fullScreenCheckBox.Height + 5);
+
+                configPanel.Controls.AddRange(new Control[] { prompt, vlcFilePathTextBox, fullScreenCheckBox, alwaysOnTopCheckBox, vlcFileSelectButton });
             }
             return false;
         }
         private const string SETTING_SUB_FOLDER = @"\mb_VlcVideoPlay";
         private const string SETTING_FILE_NAME = SETTING_SUB_FOLDER + @"\VlcVideoPlayPlugin.xml";
 
-
         private void VlcFileSelectButton_Clicked(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.InitialDirectory = GetDefaultVlcPath();
+            openFileDialog1.InitialDirectory = Tools.GetDefaultVlcPath();
             openFileDialog1.FileName = "vlc.exe";
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -155,6 +179,7 @@ namespace MusicBeePlugin
         {
             if (vlcFilePathTextBox != null) vlcPath = vlcFilePathTextBox.Text;
             if (fullScreenCheckBox != null) isFullScreen = fullScreenCheckBox.Checked;
+            if (alwaysOnTopCheckBox != null) isAlwaysOnTop = alwaysOnTopCheckBox.Checked;
 
             // save any persistent settings in a sub-folder of this path
             string dataPath = mbApiInterface.Setting_GetPersistentStoragePath();
@@ -171,19 +196,19 @@ namespace MusicBeePlugin
                     System.IO.Directory.CreateDirectory(subFolder);
                 }
 
-
                 //Open file
                 System.IO.FileStream fs1 =
                     new System.IO.FileStream(datafile, System.IO.FileMode.Create);
-                //Selialkize and save to xml file
-                serializer1.Serialize(fs1, new Settings(vlcPath, isFullScreen));
+                //Selialize and save to xml file
+                Settings settings = new Settings(vlcPath, isFullScreen, isAlwaysOnTop);
+                //string stringStr = settings.ToString();
+                serializer1.Serialize(fs1, settings);
                 fs1.Close();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //MessageBox.Show(ignored.Message);
+                //MessageBox.Show(ex.Message);
             }
-
         }
 
         // MusicBee is closing the plugin (plugin is being disabled by user or MusicBee is shutting down)
@@ -269,8 +294,9 @@ namespace MusicBeePlugin
                         MessageBox.Show(duration + "");
             */
 
-            string vlcCommand = "--rate=1.0 --play-and-exit --video-on-top ";
+            string vlcCommand = "--rate=1.0 --play-and-exit ";
             if (isFullScreen) vlcCommand += " --fullscreen ";
+            if (isAlwaysOnTop) vlcCommand += " --video-on-top ";
             vlcCommand += " \"" + fileUrl + "\"";
 
             IntPtr currentWindow = GetForegroundWindow();
