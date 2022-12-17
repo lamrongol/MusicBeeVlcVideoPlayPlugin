@@ -39,3 +39,12 @@ MusicBeeで音楽とビデオを連続で再生するためのプラグインで
 特徴
 -----
 -設定でVLCをフルスクリーンモードや最前面表示にできます
+
+
+====================
+Related threads
+----
+- https://getmusicbee.com/forum/index.php?topic=12419.0
+- https://getmusicbee.com/forum/index.php?topic=12302.0
+- https://getmusicbee.com/forum/index.php?topic=37273.0
+- https://getmusicbee.com/forum/index.php?topic=37275.0
