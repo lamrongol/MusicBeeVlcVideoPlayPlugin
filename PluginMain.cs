@@ -329,6 +329,7 @@ namespace MusicBeePlugin
                 {
                     if (newProcess.MainWindowTitle.Contains(strTitleContains))
                     {
+                        SetForegroundWindow(newProcess.MainWindowHandle);
                         SetForegroundWindow(currentWindow);
                         //Console.WriteLine("Title:" + newProcess.MainWindowTitle);
                         return;
