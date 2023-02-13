@@ -306,6 +306,7 @@ namespace MusicBeePlugin
             vlcCommand += " \"" + fileUrl + "\"";
 
             IntPtr currentWindow = GetForegroundWindow();
+            Process currentProcess = Process.GetCurrentProcess();
             vlcProcess = new System.Diagnostics.Process();
             vlcProcess.StartInfo.FileName = vlcPath;
             vlcProcess.StartInfo.Arguments = vlcCommand;
@@ -314,7 +315,7 @@ namespace MusicBeePlugin
             vlcProcess.Start();
             vlcProcess.WaitForInputIdle();
             string strTitleContains = Path.GetFileName(fileUrl);
-            ReactivateCurrentWindow(vlcProcess, strTitleContains, currentWindow);
+            if (!currentProcess.MainWindowTitle.Contains("MusicBee")) ReactivateCurrentWindow(vlcProcess, strTitleContains, currentWindow);
 
             return true;
         }
