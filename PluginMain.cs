@@ -306,7 +306,7 @@ namespace MusicBeePlugin
             vlcCommand += " \"" + fileUrl + "\"";
 
             IntPtr currentWindow = GetForegroundWindow();
-            Process currentProcess = Process.GetCurrentProcess();
+            Process currentProcess = Process.GetProcessById(GetProcessId(currentWindow));
             vlcProcess = new System.Diagnostics.Process();
             vlcProcess.StartInfo.FileName = vlcPath;
             vlcProcess.StartInfo.Arguments = vlcCommand;
@@ -325,6 +325,9 @@ namespace MusicBeePlugin
 
         [DllImport("user32.dll")]
         static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("kernel32.dll")]
+        static extern int GetProcessId(IntPtr handle);
 
         static async void ReactivateCurrentWindow(Process newProcess, string strTitleContains, IntPtr currentWindow)
         {
