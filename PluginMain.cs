@@ -100,7 +100,8 @@ namespace MusicBeePlugin
                 vlcPath = appSettings.VlcPath;
 
                 isFullScreen = appSettings.IsFullScreen;
-                isAlwaysOnTop = appSettings.IsAlwaysOnTop; 
+                //TODO Temporary treatment
+                isAlwaysOnTop = false;// appSettings.IsAlwaysOnTop; 
                 fs2.Close();
             }
             catch (Exception)
@@ -148,12 +149,15 @@ namespace MusicBeePlugin
                 fullScreenCheckBox.Text = "Full Screen";
                 fullScreenCheckBox.Location = new Point(0, vlcFilePathTextBox.Height + 5);
 
+                //TODO Temporary treatment
+                /*
                 alwaysOnTopCheckBox = new CheckBox();
                 alwaysOnTopCheckBox.Checked = isAlwaysOnTop;
                 alwaysOnTopCheckBox.Text = "Always On Top";
                 alwaysOnTopCheckBox.Location = new Point(0, fullScreenCheckBox.Location.Y + fullScreenCheckBox.Height + 5);
+                */
 
-                configPanel.Controls.AddRange(new Control[] { prompt, vlcFilePathTextBox, fullScreenCheckBox, alwaysOnTopCheckBox, vlcFileSelectButton });
+                configPanel.Controls.AddRange(new Control[] { prompt, vlcFilePathTextBox, fullScreenCheckBox, /* TODO Temporary treatment: alwaysOnTopCheckBox,*/ vlcFileSelectButton });
             }
             return false;
         }
@@ -179,7 +183,8 @@ namespace MusicBeePlugin
         {
             if (vlcFilePathTextBox != null) vlcPath = vlcFilePathTextBox.Text;
             if (fullScreenCheckBox != null) isFullScreen = fullScreenCheckBox.Checked;
-            if (alwaysOnTopCheckBox != null) isAlwaysOnTop = alwaysOnTopCheckBox.Checked;
+            //TODO Temporary treatment
+            //if (alwaysOnTopCheckBox != null) isAlwaysOnTop = alwaysOnTopCheckBox.Checked;
 
             // save any persistent settings in a sub-folder of this path
             string dataPath = mbApiInterface.Setting_GetPersistentStoragePath();
@@ -260,6 +265,16 @@ namespace MusicBeePlugin
 
         }
 
+        [DllImport("user32.dll")]
+        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+        static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
+        static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+
+        const UInt32 SWP_NOSIZE = 0x0001;
+        const UInt32 SWP_NOMOVE = 0x0002;
+        const UInt32 TOPMOST_FLAGS = SWP_NOMOVE | SWP_NOSIZE;
+
         //private TimeSpan duration;
         //private DateTime start;
         public bool PlayVideo(string[] urls)
@@ -302,7 +317,8 @@ namespace MusicBeePlugin
 
             string vlcCommand = "--rate=1.0 --play-and-exit ";
             if (isFullScreen) vlcCommand += " --fullscreen ";
-            if (isAlwaysOnTop) vlcCommand += " --video-on-top ";
+            //TODO This may be reinstated in the future if users want VLC "really" always the top most (even if another window is activated after VLC is started).
+            //if (isAlwaysOnTop) vlcCommand += " --video-on-top ";
             vlcCommand += " \"" + fileUrl + "\"";
 
             IntPtr currentWindow = GetForegroundWindow();
@@ -339,8 +355,11 @@ namespace MusicBeePlugin
                 {
                     if (newProcess.MainWindowTitle.Contains(strTitleContains))
                     {
+                        SetWindowPos(newProcess.MainWindowHandle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
                         SetForegroundWindow(currentWindow);
                         //Console.WriteLine("Title:" + newProcess.MainWindowTitle);
+                        await Task.Delay(10);
+                        SetWindowPos(newProcess.MainWindowHandle, HWND_NOTOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
                         return;
                     }
                 }
