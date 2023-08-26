@@ -71,7 +71,7 @@ namespace MusicBeePlugin
             about.PluginInfoVersion = PluginInfoVersion;
             about.Name = "Video Continuous Play";
             about.Description = "Play music and music video continuously";
-            about.Author = "Tomohide Fujikawa";
+            about.Author = "lamrongol";
             about.TargetApplication = "";   // current only applies to artwork, lyrics or instant messenger name that appears in the provider drop down selector or target Instant Messenger
             about.Type = PluginType.VideoPlayer; 
             about.VersionMajor = 1;  // your plugin version

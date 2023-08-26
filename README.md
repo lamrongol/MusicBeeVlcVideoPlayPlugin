@@ -8,7 +8,7 @@ This is a plugin for MusicBee to play music and music videos continuously.
 
 Install
 -----
-1. You need the latest beta MusicBee: https://getmusicbee.com/forum/index.php?topic=36464
+1. You need MusicBee 3.5+: https://getmusicbee.com
 2. Install VLC media player if you haven't.
    VLC: https://www.videolan.org/vlc/
 3. Download dll file to MusicBee plugin folder (C:\Program Files (x86)\MusicBee\Plugins, frequently)
@@ -29,7 +29,7 @@ MusicBeeで音楽とビデオを連続で再生するためのプラグインで
 
 インストール
 -----
-1. MusicBee最新ベータ版が必要です: https://getmusicbee.com/forum/index.php?topic=36464
+1. MusicBee(Ver 3.5以上)が必要です: https://getmusicbee.com
 2. まだインストールしてないならVLCメディアプレイヤーをインストールします
    VLC: https://www.videolan.org/vlc/
 3. DLLファイルをダウンロードしMusicBeeのpluginフォルダに置きます(通常は C:\Program Files (x86)\MusicBee\Plugins)
