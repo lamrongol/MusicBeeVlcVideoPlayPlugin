@@ -250,6 +250,7 @@ namespace MusicBeePlugin
                     //lamrongol: "from ver 3_5_8402, `PlayState` sometimes changes `Stopped` when playing a video."
                     //Steven: "it might happen at the very start of a video in the cases when you were playing a music file as the music file comes to an end. Perhaps just ignore it if its in the first couple of seconds at the start the video?"
                     //if (prePlayState == PlayState.Stopped && mbApiInterface.Player_GetPlayState() == PlayState.Stopped) StopCurrentVlc();
+                    if (mbApiInterface.Player_GetPlayState() == PlayState.Stopped) StopCurrentVlc();
                     prePlayState = mbApiInterface.Player_GetPlayState();
                     break;
             }
@@ -260,9 +261,16 @@ namespace MusicBeePlugin
             if (vlcProcess != null && !vlcProcess.HasExited)
             {
                 vlcProcess.Exited -= new EventHandler(VlcProcess_Exited);
-                vlcProcess.CloseMainWindow();
-            }
 
+                if (!vlcProcess.CloseMainWindow())
+                {
+                    vlcProcess.Kill();  // 終了しなかった場合は強制終了する
+                }
+
+                vlcProcess.Close();
+                vlcProcess.Dispose();
+                vlcProcess = null;
+            }
         }
 
         [DllImport("user32.dll")]
