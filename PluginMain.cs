@@ -293,6 +293,7 @@ namespace MusicBeePlugin
                 //mbApiInterface.Player_PlayNextTrack();
                 return false;
             }
+            IntPtr currentWindowHandle = GetForegroundWindow();
             StopCurrentVlc();
             String fileUrl = urls[0];
 
@@ -329,8 +330,6 @@ namespace MusicBeePlugin
             //if (isAlwaysOnTop) vlcCommand += " --video-on-top ";
             vlcCommand += " \"" + fileUrl + "\"";
 
-            IntPtr currentWindow = GetForegroundWindow();
-            Process currentProcess = Process.GetProcessById(GetProcessId(currentWindow));
             vlcProcess = new System.Diagnostics.Process();
             vlcProcess.StartInfo.FileName = vlcPath;
             vlcProcess.StartInfo.Arguments = vlcCommand;
@@ -339,7 +338,7 @@ namespace MusicBeePlugin
             vlcProcess.Start();
             vlcProcess.WaitForInputIdle();
             string strTitleContains = Path.GetFileName(fileUrl);
-            if (!currentProcess.MainWindowTitle.Contains("MusicBee")) ReactivateCurrentWindow(vlcProcess, strTitleContains, currentWindow);
+            ReactivateCurrentWindow(vlcProcess, strTitleContains, currentWindowHandle);
 
             return true;
         }
@@ -350,26 +349,31 @@ namespace MusicBeePlugin
         [DllImport("user32.dll")]
         static extern bool SetForegroundWindow(IntPtr hWnd);
 
-        [DllImport("kernel32.dll")]
-        static extern int GetProcessId(IntPtr handle);
 
-        static async void ReactivateCurrentWindow(Process newProcess, string strTitleContains, IntPtr currentWindow)
+        static async void ReactivateCurrentWindow(Process newProcess, string strTitleContains, IntPtr currentWindowHandle)
         {
-            for(int i = 0; i<100; i++)
+            for (int i = 0; i < 1500; i++)
             {
                 newProcess.Refresh();
-                //Console.WriteLine("MainWindowHandle:" + newProcess.MainWindowHandle);
-                if (!newProcess.MainWindowHandle.Equals(IntPtr.Zero))
+                IntPtr newWindowHandle = newProcess.MainWindowHandle;
+                if (!newWindowHandle.Equals(IntPtr.Zero))
                 {
-                    if (newProcess.MainWindowTitle.Contains(strTitleContains))
+                    for (int j = 0; j < 1500; j++)
                     {
-                        SetWindowPos(newProcess.MainWindowHandle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
-                        SetForegroundWindow(currentWindow);
-                        //Console.WriteLine("Title:" + newProcess.MainWindowTitle);
-                        await Task.Delay(10);
-                        SetWindowPos(newProcess.MainWindowHandle, HWND_NOTOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
-                        return;
+                        newProcess.Refresh();
+
+                        if (newProcess.MainWindowTitle.Length - strTitleContains.Length > -5)
+                        {
+                            SetWindowPos(newWindowHandle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
+                            SetForegroundWindow(currentWindowHandle);
+
+                            await Task.Delay(10);
+                            SetWindowPos(newProcess.MainWindowHandle, HWND_NOTOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
+
+                            return;
+                        }
                     }
+                    return;
                 }
                 await Task.Delay(10);
             }
