@@ -34,8 +34,8 @@ namespace MusicBeePlugin
         public Settings()
         {
             this.vlcPath = Tools.GetDefaultVlcPath() + @"\vlc.exe";
-            this.isFullScreen = false;
-            this.isAlwaysOnTop = false;
+            this.isFullScreen = true;
+            this.isAlwaysOnTop = true;
         }
         public Settings(String vlcPath, bool isFullScreen, bool isAlwaysOnTop)
         {
