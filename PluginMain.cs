@@ -339,12 +339,31 @@ namespace MusicBeePlugin
         {
             for (int i = 0; i < 1500; i++)
             {
+                try
+                {
+                    if (newProcess.HasExited) return;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    return;
+                }
                 newProcess.Refresh();
+
                 IntPtr newWindowHandle = newProcess.MainWindowHandle;
                 if (!newWindowHandle.Equals(IntPtr.Zero))
                 {
                     for (int j = 0; j < 1500; j++)
                     {
+                        try
+                        {
+                            if (newProcess.HasExited) return;
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.ToString());
+                            return;
+                        }
                         newProcess.Refresh();
 
                         if (newProcess.MainWindowTitle.Length - strTitleContains.Length > -5)
